@@ -10,6 +10,8 @@ const connectDB = require('./config/db');
 
 const authRoutes = require('./routes/authRoutes');
 
+const recipeRoutes = require('./routes/recipeRoutes');
+
 dotenv.config();
 
 connectDB();
@@ -31,6 +33,9 @@ app.get('/api/test', (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 
+//recipe API
+
+app.use('/api/recipes', recipeRoutes);
 
 const PORT = process.env.PORT || 5000;
 
