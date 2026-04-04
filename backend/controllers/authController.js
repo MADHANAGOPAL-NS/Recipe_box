@@ -3,6 +3,7 @@
 const User = require('../models/User');
 
 const jwt = require('jsonwebtoken');
+const { cloudinary } = require('../config/cloudinary');
 
 //function to generate JWT
 
@@ -28,14 +29,23 @@ const registerUser = async (req, res) => {
         return res.status(400).json({ message: 'User already exists' });
     }
 
+    // Use the Cloudinary URL from req.file
+    const imagePath = req.file ? req.file.path : '';
+
     // Create User
-    const user = await User.create({ username, email, password });
+    const user = await User.create({
+        username,
+        email,
+        password,
+        profilePic: imagePath
+    });
 
     if (user) {
         res.status(201).json({
             _id: user._id,
             username: user.username,
             email: user.email,
+            profilePic: user.profilePic,
             token: generateToken(user._id),
         });
     }
@@ -58,6 +68,7 @@ const loginUser = async (req, res) => {
             _id: user._id,
             username: user.username,
             email: user.email,
+            profilePic: user.profilePic,
             token: generateToken(user._id)
         });
     }
@@ -67,4 +78,35 @@ const loginUser = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser };
+// Delete the user and their profile picture from Cloudinary
+const deleteUser = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Delete profile pic from Cloudinary if it exists
+        if (user.profilePic) {
+            // Robust extraction: get everything between '/upload/' and the file extension
+            // Example: .../upload/v12345/profile/abcd.jpg -> 'profile/abcd'
+            const parts = user.profilePic.split('/');
+            const uploadIndex = parts.findIndex(part => part === 'upload');
+            // Public ID starts after the version (e.g., parts[uploadIndex + 2])
+            // to include the folder 'profile/'.
+            const publicIdWithExt = parts.slice(uploadIndex + 2).join('/');
+            const publicId = publicIdWithExt.split('.')[0];
+            
+            await cloudinary.uploader.destroy(publicId);
+        }
+
+        await user.deleteOne();
+        res.status(200).json({ message: 'User and profile picture deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error during deletion' });
+    }
+};
+
+module.exports = { registerUser, loginUser, deleteUser };

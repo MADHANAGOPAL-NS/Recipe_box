@@ -8,7 +8,7 @@ const { createRecipe, getRecipes, getRecipeById, updateRecipe, deleteRecipe } = 
 
 const { protect } = require('../middleware/authMiddleware');
 
-const { upload } = require('../config/cloudinary');
+const { recipeUpload } = require('../config/cloudinary');
 
 //public routes
 
@@ -17,9 +17,9 @@ router.get('/:id', getRecipeById);
 
 //protected routes only logged users can reach this
 
-router.post('/', protect, upload.single('image'), createRecipe);
+router.post('/', protect, recipeUpload.single('image'), createRecipe);
 
-router.put('/:id', protect, upload.single('image'), updateRecipe);
+router.put('/:id', protect, recipeUpload.single('image'), updateRecipe);
 
 router.delete('/:id', protect, deleteRecipe);
 

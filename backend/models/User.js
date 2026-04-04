@@ -27,6 +27,11 @@ const userSchema = mongoose.Schema(
             minlength: 6
         },
 
+        profilePic: {
+            type: String,
+            default: ''
+        },
+
         followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
     },

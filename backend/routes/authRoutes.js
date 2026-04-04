@@ -1,13 +1,13 @@
-//this file contains the routing logic
-
 const express = require('express');
-
 const router = express.Router();
+const { registerUser, loginUser, deleteUser } = require('../controllers/authController');
+const { protect } = require('../middleware/authMiddleware');
 
-const { registerUser, loginUser } = require('../controllers/authController');
+const { profileUpload, cloudinary } = require('../config/cloudinary');
 
-//endpoint for both register and login
-router.post('/register', registerUser);
+//routes
+router.post('/register', profileUpload.single('image'), registerUser);
 router.post('/login', loginUser);
+router.delete('/delete', protect, deleteUser);
 
 module.exports = router;

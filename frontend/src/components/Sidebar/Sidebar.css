@@ -1,0 +1,221 @@
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: var(--white);
+  border-right: 1px solid var(--input-border);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  z-index: 100;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.sidebar-profile {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.profile-info h4 {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin: 0;
+  font-weight: 700;
+}
+
+.profile-info p {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  margin: 0;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: var(--transition);
+  width: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.nav-item:hover {
+  background-color: var(--input-bg);
+  color: var(--primary-color);
+}
+
+.nav-item.active {
+  background-color: #fff4e5; /* Light version of primary */
+  color: var(--primary-color);
+}
+
+.dark-theme .nav-item.active {
+  background-color: rgba(214, 126, 44, 0.1);
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+}
+
+.nav-text {
+  flex: 1;
+}
+
+/* Settings Panel */
+.settings-panel {
+  margin-top: 10px;
+  padding: 20px;
+  background-color: var(--input-bg);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.settings-section h5 {
+  font-size: 0.65rem;
+  color: var(--text-light);
+  letter-spacing: 1.5px;
+  margin-bottom: 12px;
+}
+
+.theme-toggle {
+  display: flex;
+  background-color: var(--input-border);
+  padding: 4px;
+  border-radius: 12px;
+  gap: 4px;
+}
+
+.theme-toggle button {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+}
+
+.theme-toggle button.active {
+  background-color: var(--white);
+  color: var(--text-primary);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.delete-btn {
+  width: 100%;
+  text-align: left;
+  padding: 8px 0;
+  color: var(--error);
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: transparent;
+}
+
+.delete-btn:hover {
+  text-decoration: underline;
+}
+
+/* Modal UI */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background-color: var(--white);
+  padding: 40px;
+  border-radius: 30px;
+  max-width: 450px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.modal-box h3 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: 15px;
+}
+
+.modal-box p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin-bottom: 30px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.confirm-btn {
+  flex: 2;
+  background-color: var(--error);
+  color: white;
+  padding: 14px;
+  border-radius: 14px;
+  font-weight: 700;
+}
+
+.cancel-btn {
+  flex: 1;
+  background-color: var(--input-bg);
+  color: var(--text-secondary);
+  padding: 14px;
+  border-radius: 14px;
+  font-weight: 700;
+}
+
+/* Sidebar Footer (already exists but adding just in case) */
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.btn-premium {
+  width: 100%;
+  background: linear-gradient(90deg, #d67e2c, #8b4513);
+  color: white;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
