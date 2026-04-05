@@ -19,9 +19,15 @@ const getRecipes = async () => {
   return response.data;
 };
 
+const getRecipeById = async (id) => {
+  const response = await axios.get(API_URL + id);
+  return response.data;
+};
+
 const recipeService = {
   createRecipe,
   getRecipes,
+  getRecipeById,
 };
 
 export default recipeService;

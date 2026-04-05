@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
-import Sidebar from '../components/Sidebar/Sidebar';
 import Header from '../components/Header/Header';
 import recipeService from '../services/recipeService';
 import authService from '../services/authService';
@@ -110,15 +109,12 @@ const CreateRecipe = () => {
       setLoading(false);
     }
   };
-
   return (
     <div className="create-page">
-      <Sidebar />
-      <div className="main-wrapper">
-        <Header />
-        <div className="create-container">
-          <main className="recipe-editor">
-            <div className="editor-header">
+      <Header />
+      <div className="create-container">
+        <main className="recipe-editor">
+          <div className="editor-header">
               <h1>Create New Alchemy</h1>
               <p>Transform your culinary experiments into permanent records. Detail every nuance of your creation.</p>
             </div>
@@ -298,7 +294,6 @@ const CreateRecipe = () => {
               </div>
             </div>
           </aside>
-        </div>
       </div>
     </div>
   );

@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap');
 
 :root {
@@ -44,7 +48,12 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading);
   font-weight: 700;
   line-height: 1.2;
@@ -64,7 +73,8 @@ button {
   transition: var(--transition);
 }
 
-input, textarea {
+input,
+textarea {
   font-family: var(--font-body);
   outline: none;
 }
@@ -171,7 +181,8 @@ input, textarea {
 }
 
 .password-input-wrapper .form-input {
-  padding-right: 45px !important; /* Ensure text doesn't overlap eye */
+  padding-right: 45px !important;
+  /* Ensure text doesn't overlap eye */
   width: 100%;
 }
 
