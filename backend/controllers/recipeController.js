@@ -103,7 +103,24 @@ const deleteRecipe = async (req, res) => {
 // API for getting all recipes
 const getRecipes = async (req, res) => {
     try {
-        const recipes = await Recipe.find().populate('author', 'username email');
+        //including the search logic by using the backend technique
+
+        const { search } = req.query;
+
+        let query = {};
+
+        //check if search is provided
+        if (search) {
+            query = {
+                title: {
+                    $regex: search,
+                    $options: 'i'
+                }
+            };
+        }
+
+        //fetch recipes form MongoDB based on the query
+        const recipes = await Recipe.find(query).populate('author', 'username email');
         res.status(200).json(recipes);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching recipes' });

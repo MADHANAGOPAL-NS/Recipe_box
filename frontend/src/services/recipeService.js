@@ -14,8 +14,9 @@ const createRecipe = async (recipeData, token) => {
   return response.data;
 };
 
-const getRecipes = async () => {
-  const response = await axios.get(API_URL);
+const getRecipes = async (search = '') => {
+  const url = search ? `${API_URL}?search=${search}` : API_URL;
+  const response = await axios.get(url);
   return response.data;
 };
 
