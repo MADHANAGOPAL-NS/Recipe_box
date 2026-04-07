@@ -13,7 +13,7 @@ const FeedPage = () => {
     const fetchRecipes = async () => {
       try {
         setLoading(true);
-        const data = await recipeService.getRecipes(searchQuery);
+        const data = await recipeService.getRecipes({ search: searchQuery });
         setRecipes(data);
         setError(null);
       } catch (err) {
@@ -24,12 +24,12 @@ const FeedPage = () => {
       }
     };
 
-    //DEBOUNCE: Wait 500ms before searching
+    // DEBOUNCE: Wait 500ms before searching
     const timer = setTimeout(() => {
       fetchRecipes();
     }, 500);
 
-    //Cleanup: Clear the timer if the user types again immediately
+    // Cleanup: Clear the timer if the user types again immediately
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
@@ -49,13 +49,13 @@ const FeedPage = () => {
         {/* Search Section */}
         <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
-        {/* Info Bars */}
+        {/* Info Box */}
         {!loading && recipes.length > 0 && searchQuery && (
-          <div className="text-center mb-8 animate-in fade-in duration-500">
-            <span className="bg-white shadow-sm rounded-full px-5 py-2 text-sm font-semibold text-gray-600 ring-1 ring-gray-100">
-              Found {recipes.length} {recipes.length === 1 ? 'recipe' : 'recipes'} for "<span className="text-[#d67e2c]">{searchQuery}</span>"
-            </span>
-          </div>
+           <div className="text-center mb-8 animate-in fade-in duration-500">
+              <span className="bg-white shadow-sm rounded-full px-5 py-2 text-sm font-semibold text-gray-600 ring-1 ring-gray-100">
+                Found {recipes.length} {recipes.length === 1 ? 'recipe' : 'recipes'} for "<span className="text-[#d67e2c]">{searchQuery}</span>"
+              </span>
+           </div>
         )}
 
         {/* Grid/Feed Section */}

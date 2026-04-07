@@ -105,20 +105,39 @@ const getRecipes = async (req, res) => {
     try {
         //including the search logic by using the backend technique
 
-        const { search } = req.query;
+        const { search, time, ingredients, exclude } = req.query;
 
         let query = {};
 
-        //check if search is provided
+        //search by title
         if (search) {
-            query = {
-                title: {
-                    $regex: search,
-                    $options: 'i'
-                }
+            query.title = { $regex: search, $options: 'i' };
+        }
+        //filter by cook time
+        if (time) {
+            query.cookTime = { $lte: Number(time) };
+        }
+
+        //search by ingredients
+        if (ingredients) {
+            const includesArr = ingredients.split(',').map(i => i.trim());
+            query['ingredients.name'] = {
+                $in: includesArr.map(name => new RegExp(name, 'i'))
             };
         }
 
+        //exclude ingredients that must not contain in the list of recipes
+
+        if (exclude) {
+            const excludesArr = exclude.split(',').map(e => e.trim());
+            // If we are already filtering by ingredients, we need an $and operator
+            // but for simplicity, we can use $nin (Not In)
+
+            query['ingredients.name'] = {
+                ...query['ingredients.name'],
+                $nin: excludesArr.map(name => new RegExp(name, 'i'))
+            };
+        }
         //fetch recipes form MongoDB based on the query
         const recipes = await Recipe.find(query).populate('author', 'username email');
         res.status(200).json(recipes);

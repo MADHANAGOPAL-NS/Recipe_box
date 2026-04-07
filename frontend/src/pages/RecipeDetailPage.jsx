@@ -23,7 +23,6 @@ const RecipeDetailPage = () => {
         setLoading(false);
       }
     };
-
     fetchRecipe();
   }, [id]);
 
