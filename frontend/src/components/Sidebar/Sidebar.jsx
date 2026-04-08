@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import authService from '../../services/authService';
 import './Sidebar.css';
 
-const Sidebar = () => {
+const Sidebar = ({ isCollapsed, toggleSidebar }) => {
   const user = authService.getCurrentUser();
   const navigate = useNavigate();
 
@@ -31,11 +31,17 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+      <div className="sidebar-header">
+        <button className="hamburger-btn" onClick={toggleSidebar}>
+          {isCollapsed ? '☰' : '✕'}
+        </button>
+      </div>
+
       <div className="sidebar-profile">
         <div className="profile-info">
-          <h4>{user?.username || 'RecipeBox'}</h4>
-          <p>Digital Alchemist</p>
+          <h4>{isCollapsed ? (user?.username?.charAt(0) || 'R') : (user?.username || 'RecipeBox')}</h4>
+          {!isCollapsed && <p>Digital Alchemist</p>}
         </div>
       </div>
 
@@ -45,21 +51,23 @@ const Sidebar = () => {
             key={item.name}
             to={item.path}
             className={({ isActive }) => (isActive ? 'nav-item active' : 'nav-item')}
+            title={item.name}
           >
             <span className="nav-icon">{item.icon}</span>
-            <span className="nav-text">{item.name}</span>
+            {!isCollapsed && <span className="nav-text">{item.name}</span>}
           </NavLink>
         ))}
 
         <button 
           className={`nav-item ${isSettingsOpen ? 'active' : ''}`}
           onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+          title="Settings"
         >
           <span className="nav-icon">⚙️</span>
-          <span className="nav-text">Settings</span>
+          {!isCollapsed && <span className="nav-text">Settings</span>}
         </button>
 
-        {isSettingsOpen && (
+        {isSettingsOpen && !isCollapsed && (
           <div className="settings-panel">
             <div className="settings-section">
               <h5>ACCOUNT</h5>
@@ -85,7 +93,9 @@ const Sidebar = () => {
       )}
 
       <div className="sidebar-footer">
-        <button className="btn btn-premium">Go Premium</button>
+        <button className="btn btn-premium">
+          {isCollapsed ? '⭐' : 'Go Premium'}
+        </button>
       </div>
     </aside>
   );

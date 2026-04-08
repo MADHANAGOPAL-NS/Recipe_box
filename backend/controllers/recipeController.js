@@ -122,7 +122,7 @@ const getRecipes = async (req, res) => {
         if (ingredients) {
             const includesArr = ingredients.split(',').map(i => i.trim());
             query['ingredients.name'] = {
-                $in: includesArr.map(name => new RegExp(name, 'i'))
+                $all: includesArr.map(name => new RegExp(name, 'i'))
             };
         }
 
