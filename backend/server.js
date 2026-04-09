@@ -16,6 +16,8 @@ const authRoutes = require('./routes/authRoutes');
 
 const recipeRoutes = require('./routes/recipeRoutes');
 
+const userRoutes = require('./routes/userRoutes');
+
 connectDB();
 
 const app = express();
@@ -40,6 +42,10 @@ app.use('/api/auth', authRoutes);
 //recipe API
 
 app.use('/api/recipes', recipeRoutes);
+
+//user API
+
+app.use('/api/users', userRoutes);
 
 const PORT = process.env.PORT || 5000;
 
