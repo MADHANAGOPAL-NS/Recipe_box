@@ -1,4 +1,5 @@
 // handles the logic for creating, fetching, updating, and deleting recipes
+const User = require('../models/User');
 const Recipe = require('../models/Recipe');
 const { cloudinary } = require('../config/cloudinary');
 
@@ -160,4 +161,30 @@ const getRecipeById = async (req, res) => {
     }
 };
 
-module.exports = { createRecipe, getRecipes, getRecipeById, updateRecipe, deleteRecipe };
+const getFeed = async (req, res) => {
+    try {
+        //fetch user from the DB using req.user
+        const user = await User.findById(req.user._id);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        //extract the following array
+        const following = user.following;
+
+        // Fetch recipes where author is in the user's following list
+        // Sort by newest first (createdAt: -1)
+
+        const feedRecipes = await Recipe.find({ author: { $in: following } }).populate('author', 'username profilePic').sort({ createdAt: -1 });
+
+        //return the recipes
+        res.status(200).json(feedRecipes);
+    }
+
+    catch (error) {
+        res.status(500).json({ message: "Error fetching feed", error: error.message });
+    }
+}
+
+module.exports = { createRecipe, getRecipes, getRecipeById, updateRecipe, deleteRecipe, getFeed };

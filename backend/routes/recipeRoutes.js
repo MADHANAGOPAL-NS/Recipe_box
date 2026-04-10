@@ -4,11 +4,15 @@ const express = require('express');
 
 const router = express.Router();
 
-const { createRecipe, getRecipes, getRecipeById, updateRecipe, deleteRecipe } = require('../controllers/recipeController');
+const { createRecipe, getRecipes, getRecipeById, updateRecipe, deleteRecipe, getFeed } = require('../controllers/recipeController');
 
 const { protect } = require('../middleware/authMiddleware');
 
 const { recipeUpload } = require('../config/cloudinary');
+
+//feed router
+
+router.get('/feed', protect, getFeed);
 
 //public routes
 
