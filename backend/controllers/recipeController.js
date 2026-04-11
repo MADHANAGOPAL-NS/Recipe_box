@@ -187,4 +187,49 @@ const getFeed = async (req, res) => {
     }
 }
 
-module.exports = { createRecipe, getRecipes, getRecipeById, updateRecipe, deleteRecipe, getFeed };
+const addComments = async (req, res) => {
+    const { text } = req.body;
+
+    if (!text) {
+        return res.status(400).json({ message: "Comment text is required" });
+    }
+
+    try {
+        const recipe = await Recipe.findById(req.params.id);
+
+        if (!recipe) {
+            return res.status(404).json({ message: "Recipe not found" });
+        }
+
+        const newComment = { user: req.user._id, text, createdAt: new Date() };
+
+        recipe.comments.push(newComment);
+
+        await recipe.save();
+
+        res.status(201).json({ message: "Comment added successfully" });
+    }
+    catch (error) {
+        res.status(500).json({ message: "Error adding comment", error: error.message });
+    }
+};
+
+const getComments = async (req, res) => {
+    try {
+        const recipe = await Recipe.findById(req.params.id)
+            .populate('comments.user', 'username profilePic');
+        if (!recipe) {
+
+            return res.status(404).json({ message: 'Recipe not found' });
+
+        }
+        res.status(200).json(recipe.comments);
+
+    }
+    catch (error) {
+
+        res.status(500).json({ message: 'Error fetching comments', error: error.message });
+    }
+};
+
+module.exports = { createRecipe, getRecipes, getRecipeById, updateRecipe, deleteRecipe, getFeed, addComments, getComments };
