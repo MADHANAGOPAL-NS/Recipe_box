@@ -232,4 +232,58 @@ const getComments = async (req, res) => {
     }
 };
 
-module.exports = { createRecipe, getRecipes, getRecipeById, updateRecipe, deleteRecipe, getFeed, addComments, getComments };
+const rateRecipe = async (req, res) => {
+    const { value } = req.body;
+
+    // 1. Validation: Check if rating is between 1 and 5
+
+    if (value < 1 || value > 5) {
+        return res.status(400).json({ message: 'Rating must be between 1 and 5' });
+    }
+
+    try {
+        const recipe = await Recipe.findById(req.params.id);
+        if (!recipe) {
+            return res.status(404).json({ message: 'Recipe not found' });
+        }
+
+        // 2. Check if this user has already rated the recipe
+
+        const existingRating = recipe.ratings.find(
+            (r) => r.user.toString() === req.user._id.toString()
+        );
+
+        if (existingRating) {
+            // Update the existing rating value
+            existingRating.value = value;
+        }
+
+        else {
+            // Add a new rating to the array
+            recipe.ratings.push({ user: req.user._id, value });
+        }
+
+        // 3. Save the recipe document
+
+        await recipe.save();
+
+        // 4. Calculate the new Average Rating
+
+        const totalRatings = recipe.ratings.length;
+        const sumRatings = recipe.ratings.reduce((acc, r) => acc + r.value, 0);
+        const averageRating = totalRatings > 0 ? (sumRatings / totalRatings).toFixed(1) : 0;
+
+        res.status(200).json({
+            message: existingRating ? 'Rating updated' : 'Rating added',
+            averageRating,
+            totalRatings
+        });
+
+    }
+
+    catch (error) {
+        res.status(500).json({ message: 'Error rating recipe', error: error.message });
+    }
+};
+
+module.exports = { createRecipe, getRecipes, getRecipeById, updateRecipe, deleteRecipe, getFeed, addComments, getComments, rateRecipe };
