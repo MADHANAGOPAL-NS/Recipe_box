@@ -26,10 +26,49 @@ const getRecipeById = async (id) => {
   return response.data;
 };
 
+const getFeed = async (token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axios.get(API_URL + 'feed', config);
+  return response.data;
+};
+
+const getComments = async (id) => {
+  const response = await axios.get(`${API_URL}${id}/comments`);
+  return response.data;
+};
+
+const addComment = async (id, commentData, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axios.post(`${API_URL}${id}/comments`, commentData, config);
+  return response.data;
+};
+
+const rateRecipe = async (id, ratingData, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axios.post(`${API_URL}${id}/rate`, ratingData, config);
+  return response.data;
+};
+
 const recipeService = {
   createRecipe,
   getRecipes,
   getRecipeById,
+  getFeed,
+  getComments,
+  addComment,
+  rateRecipe,
 };
 
 export default recipeService;

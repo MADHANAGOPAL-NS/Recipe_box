@@ -30,6 +30,11 @@ const Sidebar = ({ isCollapsed, toggleSidebar }) => {
     }
   };
 
+  const handleLogout = () => {
+    authService.logout();
+    navigate('/login');
+  };
+
   return (
     <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-header">
@@ -77,6 +82,16 @@ const Sidebar = ({ isCollapsed, toggleSidebar }) => {
             </div>
           </div>
         )}
+
+        <button 
+          className="nav-item"
+          onClick={handleLogout}
+          title="Logout"
+          style={{ marginTop: 'auto', color: '#ff4d4f' }}
+        >
+          <span className="nav-icon">🚪</span>
+          {!isCollapsed && <span className="nav-text">Logout</span>}
+        </button>
       </nav>
 
       {showDeleteConfirm && (

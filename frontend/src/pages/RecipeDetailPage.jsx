@@ -8,23 +8,93 @@ const RecipeDetailPage = () => {
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState('');
+  const [userRating, setUserRating] = useState(0);
+  const [avgRating, setAvgRating] = useState(0);
+  const [totalRatings, setTotalRatings] = useState(0);
+  const [submittingRating, setSubmittingRating] = useState(false);
 
   useEffect(() => {
-    const fetchRecipe = async () => {
+    const fetchRecipeData = async () => {
       try {
         setLoading(true);
-        const data = await recipeService.getRecipeById(id);
-        setRecipe(data);
+        const recipeData = await recipeService.getRecipeById(id);
+        const commentsData = await recipeService.getComments(id);
+        
+        setRecipe(recipeData);
+        setComments(commentsData);
+
+        // Calculate initial rating stats
+        if (recipeData.ratings && recipeData.ratings.length > 0) {
+          const sum = recipeData.ratings.reduce((acc, r) => acc + r.value, 0);
+          setAvgRating((sum / recipeData.ratings.length).toFixed(1));
+          setTotalRatings(recipeData.ratings.length);
+
+          // Check if current user has already rated
+          const userStr = localStorage.getItem('user');
+          if (userStr) {
+            const user = JSON.parse(userStr);
+            const existingRating = recipeData.ratings.find(r => r.user === user._id);
+            if (existingRating) setUserRating(existingRating.value);
+          }
+        }
+
         setError(null);
       } catch (err) {
-        console.error('Error fetching recipe:', err);
+        console.error('Error fetching recipe data:', err);
         setError('Recipe not found or an error occurred.');
       } finally {
         setLoading(false);
       }
     };
-    fetchRecipe();
+    fetchRecipeData();
   }, [id]);
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+
+    const userStr = localStorage.getItem('user');
+    if (!userStr) {
+      alert('Please login to comment');
+      return;
+    }
+
+    const { token } = JSON.parse(userStr);
+    try {
+      await recipeService.addComment(id, { text: commentText }, token);
+      setCommentText('');
+      // Refresh comments
+      const freshComments = await recipeService.getComments(id);
+      setComments(freshComments);
+    } catch (err) {
+      console.error('Comment error:', err);
+      alert('Failed to post comment');
+    }
+  };
+
+  const handleRatingSubmit = async (value) => {
+    const userStr = localStorage.getItem('user');
+    if (!userStr) {
+      alert('Please login to rate');
+      return;
+    }
+
+    const { token } = JSON.parse(userStr);
+    try {
+      setSubmittingRating(true);
+      const res = await recipeService.rateRecipe(id, { value }, token);
+      setUserRating(value);
+      setAvgRating(res.averageRating);
+      setTotalRatings(res.totalRatings);
+    } catch (err) {
+      console.error('Rating error:', err);
+      alert('Failed to submit rating');
+    } finally {
+      setSubmittingRating(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -55,7 +125,7 @@ const RecipeDetailPage = () => {
 
   return (
     <div className="min-h-screen bg-[#fafafa] py-12 px-6 lg:px-24">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         {/* Back Button */}
         <button 
           onClick={() => navigate('/feed')}
@@ -70,7 +140,7 @@ const RecipeDetailPage = () => {
         {/* Hero Section */}
         <div className="bg-white rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-gray-100/50 mb-12">
           <div className="md:flex">
-            <div className="md:w-1/2 relative h-[400px]">
+            <div className="md:w-1/2 relative h-[450px]">
               <img 
                 src={recipe.image} 
                 alt={recipe.title} 
@@ -78,9 +148,9 @@ const RecipeDetailPage = () => {
               />
             </div>
             <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
-              <div className="flex flex-wrap gap-2 mb-6">
+              <div className="flex flex-wrap gap-2 mb-4">
                 {recipe.tags && recipe.tags.map((tag, i) => (
-                  <span key={i} className="px-4 py-1.5 bg-[#d67e2c]/10 text-[#d67e2c] text-xs font-bold uppercase tracking-widest rounded-full">
+                  <span key={i} className="px-4 py-1 bg-[#d67e2c]/10 text-[#d67e2c] text-[10px] font-bold uppercase tracking-widest rounded-full">
                     {tag}
                   </span>
                 ))}
@@ -88,6 +158,33 @@ const RecipeDetailPage = () => {
               <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-6 leading-tight">
                 {recipe.title}
               </h1>
+              
+              {/* Ratings Display */}
+              <div className="flex items-center gap-4 mb-8 bg-gray-50/50 p-4 rounded-2xl border border-gray-100/50 self-start">
+                 <div className="flex items-center gap-1 text-xl font-black text-gray-900">
+                    <span className="text-[#d67e2c]">★</span>
+                    {avgRating || '0.0'}
+                 </div>
+                 <div className="text-xs font-bold text-gray-400 uppercase tracking-tighter">
+                    {totalRatings} {totalRatings === 1 ? 'Rating' : 'Ratings'}
+                 </div>
+                 <div className="h-4 w-[1px] bg-gray-200 mx-1"></div>
+                 <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        disabled={submittingRating}
+                        onClick={() => handleRatingSubmit(star)}
+                        className={`text-2xl transition-all hover:scale-125 focus:outline-none ${
+                          star <= (userRating || 0) ? 'text-[#d67e2c]' : 'text-gray-200 hover:text-[#d67e2c]/40'
+                        }`}
+                      >
+                        ★
+                      </button>
+                    ))}
+                 </div>
+              </div>
+
               <div className="flex items-center gap-6 text-gray-500 font-medium">
                 <div className="flex items-center gap-2">
                   <svg className="w-5 h-5 text-[#d67e2c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,7 +193,7 @@ const RecipeDetailPage = () => {
                   <span>{recipe.cookTime || '30'} mins</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-700 font-bold border-l border-gray-200 pl-6">
-                   <div className="h-8 w-8 rounded-full bg-[#d67e2c] text-white flex items-center justify-center text-xs">
+                   <div className="h-8 w-8 rounded-full bg-[#d67e2c] text-white flex items-center justify-center text-xs ring-2 ring-white">
                      {recipe.author?.username?.charAt(0).toUpperCase()}
                    </div>
                    <span>By {recipe.author?.username}</span>
@@ -110,7 +207,7 @@ const RecipeDetailPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* Sidebar: Ingredients */}
           <div className="md:col-span-1">
-            <div className="bg-[#fcf8f5] rounded-3xl p-8 sticky top-8">
+            <div className="bg-white rounded-3xl p-8 sticky top-8 border border-gray-100 shadow-sm">
               <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
                  <span className="w-1.5 h-6 bg-[#d67e2c] rounded-full"></span>
                  Ingredients
@@ -133,12 +230,12 @@ const RecipeDetailPage = () => {
           <div className="md:col-span-2">
             <section className="mb-12">
               <h3 className="text-2xl font-bold text-gray-900 mb-6">About this Dish</h3>
-              <p className="text-gray-600 text-lg leading-relaxed whitespace-pre-line bg-white p-8 rounded-3xl border border-gray-50 shadow-sm">
+              <p className="text-gray-600 text-lg leading-relaxed whitespace-pre-line bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
                 {recipe.description}
               </p>
             </section>
 
-            <section>
+            <section className="mb-16">
               <h3 className="text-2xl font-bold text-gray-900 mb-8">Instructions</h3>
               <div className="space-y-8">
                 {recipe.instructions && recipe.instructions.map((step, i) => (
@@ -153,6 +250,67 @@ const RecipeDetailPage = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+            </section>
+
+            {/* Comments Section */}
+            <section id="comments" className="pt-12 border-t border-gray-100">
+              <h3 className="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+                Comments 
+                <span className="text-sm bg-gray-100 px-3 py-1 rounded-full text-gray-400 font-bold">{comments.length}</span>
+              </h3>
+              
+              {/* Comment Input */}
+              <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm mb-10">
+                <form onSubmit={handleCommentSubmit} className="flex flex-col gap-4">
+                  <textarea
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    placeholder="Share your thoughts on this recipe..."
+                    className="w-full p-4 bg-gray-50 rounded-2xl border-none focus:ring-2 focus:ring-[#d67e2c]/20 min-h-[100px] resize-none text-gray-700"
+                  />
+                  <div className="flex justify-end">
+                    <button
+                      type="submit"
+                      disabled={!commentText.trim()}
+                      className="px-8 py-3 bg-[#d67e2c] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:shadow-none"
+                    >
+                      Post Comment
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Comments List */}
+              <div className="space-y-6">
+                {comments.length === 0 ? (
+                  <div className="text-center py-10 text-gray-400 font-medium bg-gray-50/50 rounded-3xl border border-dashed border-gray-200">
+                    No comments yet. Be the first to share!
+                  </div>
+                ) : (
+                  [...comments].reverse().map((comment, index) => (
+                    <div key={index} className="flex gap-4 p-6 bg-white rounded-3xl border border-gray-50 shadow-sm transition-all hover:shadow-md">
+                      <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-[#d67e2c] to-[#ec7c27] flex items-center justify-center text-white text-sm font-bold shadow-sm overflow-hidden">
+                        {comment.user?.profilePic ? (
+                          <img src={comment.user.profilePic} alt={comment.user.username} className="w-full h-full object-cover" />
+                        ) : (
+                          comment.user?.username?.charAt(0).toUpperCase()
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-bold text-gray-800">{comment.user?.username}</span>
+                          <span className="text-xs text-gray-400 font-medium">
+                            {new Date(comment.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <p className="text-gray-600 leading-relaxed">
+                          {comment.text}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </section>
           </div>
