@@ -47,6 +47,7 @@ const registerUser = async (req, res) => {
             email: user.email,
             profilePic: user.profilePic,
             following: user.following, // Added following
+            savedRecipes: user.savedRecipes, // Added savedRecipes
             token: generateToken(user._id),
         });
     }
@@ -71,6 +72,7 @@ const loginUser = async (req, res) => {
             email: user.email,
             profilePic: user.profilePic,
             following: user.following, // Added following
+            savedRecipes: user.savedRecipes, // Added savedRecipes
             token: generateToken(user._id)
         });
     }

@@ -14,6 +14,7 @@ const Sidebar = ({ isCollapsed, toggleSidebar }) => {
     { name: 'Feed', icon: '🏠', path: '/feed' },
     { name: 'Discover', icon: '🧭', path: '/discover' },
     { name: 'My Recipes', icon: '📖', path: '/my-recipes' },
+    { name: 'Cookbook', icon: '🔖', path: '/cookbook' },
     { name: 'Create', icon: '➕', path: '/create' },
   ];
 

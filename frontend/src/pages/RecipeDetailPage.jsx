@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import recipeService from '../services/recipeService';
+import authService from '../services/authService';
+import userService from '../services/userService';
 
 const RecipeDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const currentUser = authService.getCurrentUser();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,6 +17,11 @@ const RecipeDetailPage = () => {
   const [avgRating, setAvgRating] = useState(0);
   const [totalRatings, setTotalRatings] = useState(0);
   const [submittingRating, setSubmittingRating] = useState(false);
+  
+  const [isSaved, setIsSaved] = useState(
+    currentUser?.savedRecipes?.includes(id) || false
+  );
+  const [saveLoading, setSaveLoading] = useState(false);
 
   useEffect(() => {
     const fetchRecipeData = async () => {
@@ -32,10 +40,8 @@ const RecipeDetailPage = () => {
           setTotalRatings(recipeData.ratings.length);
 
           // Check if current user has already rated
-          const userStr = localStorage.getItem('user');
-          if (userStr) {
-            const user = JSON.parse(userStr);
-            const existingRating = recipeData.ratings.find(r => r.user === user._id);
+          if (currentUser) {
+            const existingRating = recipeData.ratings.find(r => r.user === currentUser._id);
             if (existingRating) setUserRating(existingRating.value);
           }
         }
@@ -49,7 +55,39 @@ const RecipeDetailPage = () => {
       }
     };
     fetchRecipeData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  const handleSaveToggle = async (e) => {
+    if (e) e.stopPropagation();
+    if (!currentUser) {
+      alert('Please login to save recipes');
+      return;
+    }
+    
+    try {
+      setSaveLoading(true);
+      const updatedUser = { ...currentUser };
+      if (!updatedUser.savedRecipes) updatedUser.savedRecipes = [];
+
+      if (isSaved) {
+        await userService.unsaveRecipe(id, currentUser.token);
+        setIsSaved(false);
+        updatedUser.savedRecipes = updatedUser.savedRecipes.filter(recipeId => recipeId !== id);
+      } else {
+        await userService.saveRecipe(id, currentUser.token);
+        setIsSaved(true);
+        if (!updatedUser.savedRecipes.includes(id)) {
+          updatedUser.savedRecipes.push(id);
+        }
+      }
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+    } catch (err) {
+      console.error('Save error:', err);
+    } finally {
+      setSaveLoading(false);
+    }
+  };
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
@@ -146,6 +184,17 @@ const RecipeDetailPage = () => {
                 alt={recipe.title} 
                 className="w-full h-full object-cover"
               />
+              {currentUser && (
+                <button 
+                  onClick={handleSaveToggle}
+                  disabled={saveLoading}
+                  className="absolute top-6 right-6 p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl hover:bg-white transition-transform hover:scale-110 active:scale-95 z-10"
+                >
+                  <svg className={`w-6 h-6 ${isSaved ? 'text-[#d67e2c] fill-current' : 'text-gray-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                  </svg>
+                </button>
+              )}
             </div>
             <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
               <div className="flex flex-wrap gap-2 mb-4">

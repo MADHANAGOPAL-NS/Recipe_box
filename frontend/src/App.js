@@ -6,6 +6,7 @@ import CreateRecipe from './pages/CreateRecipe';
 import FeedPage from './pages/FeedPage';
 import DiscoverPage from './pages/DiscoverPage';
 import RecipeDetailPage from './pages/RecipeDetailPage';
+import CookbookPage from './pages/CookbookPage';
 import Sidebar from './components/Sidebar/Sidebar';
 import './App.css';
 
@@ -30,6 +31,7 @@ function AppContent() {
           <Route path="/discover" element={<DiscoverPage />} />
           <Route path="/create" element={<CreateRecipe />} />
           <Route path="/recipes/:id" element={<RecipeDetailPage />} />
+          <Route path="/cookbook" element={<CookbookPage />} />
         </Routes>
       </div>
     </div>

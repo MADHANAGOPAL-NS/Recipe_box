@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import userService from '../../services/userService';
 import authService from '../../services/authService';
 
-const RecipeCard = ({ recipe, variant = 'grid' }) => {
+const RecipeCard = ({ recipe, variant = 'grid', forceSaved = false, onUnsave }) => {
   const navigate = useNavigate();
   const currentUser = authService.getCurrentUser();
   const authorId = recipe.author?._id;
@@ -13,7 +13,11 @@ const RecipeCard = ({ recipe, variant = 'grid' }) => {
   const [isFollowing, setIsFollowing] = useState(
     currentUser?.following?.includes(authorId) || false
   );
+  const [isSaved, setIsSaved] = useState(
+    forceSaved || currentUser?.savedRecipes?.includes(recipe._id) || false
+  );
   const [loading, setLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
 
   const handleFollowToggle = async (e) => {
     e.stopPropagation(); // Prevents navigating to detail page
@@ -46,9 +50,42 @@ const RecipeCard = ({ recipe, variant = 'grid' }) => {
     }
   };
 
+  const handleSaveToggle = async (e) => {
+    e.stopPropagation();
+    if (!currentUser) {
+      alert('Please login to save recipes');
+      return;
+    }
+    
+    try {
+      setSaveLoading(true);
+      const updatedUser = { ...currentUser };
+      if (!updatedUser.savedRecipes) updatedUser.savedRecipes = [];
+
+      if (isSaved) {
+        await userService.unsaveRecipe(recipe._id, currentUser.token);
+        setIsSaved(false);
+        updatedUser.savedRecipes = updatedUser.savedRecipes.filter(id => id !== recipe._id);
+        if (onUnsave) onUnsave(recipe._id);
+      } else {
+        await userService.saveRecipe(recipe._id, currentUser.token);
+        setIsSaved(true);
+        if (!updatedUser.savedRecipes.includes(recipe._id)) {
+          updatedUser.savedRecipes.push(recipe._id);
+        }
+      }
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+    } catch (err) {
+      console.error('Save error:', err);
+      // Optionally handle specific errors like duplicate save
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
   if (variant === 'feed') {
     return (
-      <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200 mb-8 w-full max-w-[550px] mx-auto">
+      <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200 mb-8 w-full max-w-[550px] mx-auto relative relative">
         {/* INSTAGRAM HEADER */}
         <div className="flex items-center justify-between p-3 px-4">
           <div className="flex items-center gap-3">
@@ -72,11 +109,24 @@ const RecipeCard = ({ recipe, variant = 'grid' }) => {
         </div>
 
         {/* IMAGE */}
-        <div onClick={() => navigate(`/recipes/${recipe._id}`)} className="relative h-[450px] bg-gray-50 flex items-center justify-center cursor-pointer overflow-hidden">
+        <div onClick={() => navigate(`/recipes/${recipe._id}`)} className="relative h-[450px] bg-gray-50 flex items-center justify-center cursor-pointer overflow-hidden group">
           {recipe.image ? (
             <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" />
           ) : (
             <div className="text-gray-400 text-sm font-medium">No Image Available</div>
+          )}
+          
+          {/* Save Button Overlay */}
+          {currentUser && (
+            <button 
+              onClick={handleSaveToggle}
+              disabled={saveLoading}
+              className="absolute top-4 right-4 p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-white transition-transform hover:scale-110 active:scale-95"
+            >
+              <svg className={`w-5 h-5 ${isSaved ? 'text-[#d67e2c] fill-current' : 'text-gray-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
+            </button>
           )}
         </div>
 
@@ -116,6 +166,19 @@ const RecipeCard = ({ recipe, variant = 'grid' }) => {
           <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">
             No Image Available
           </div>
+        )}
+        
+        {/* Save Button Overlay */}
+        {currentUser && (
+          <button 
+            onClick={handleSaveToggle}
+            disabled={saveLoading}
+            className="absolute top-4 right-4 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-white transition-transform hover:scale-110 active:scale-95 z-10"
+          >
+            <svg className={`w-4 h-4 ${isSaved ? 'text-[#d67e2c] fill-current' : 'text-gray-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+            </svg>
+          </button>
         )}
       </div>
       <div className="p-6 flex flex-col flex-grow">

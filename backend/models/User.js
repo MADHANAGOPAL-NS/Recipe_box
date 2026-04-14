@@ -33,8 +33,12 @@ const userSchema = mongoose.Schema(
         },
 
         followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-        following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+        following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+
+        savedRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recipe' }]
+
     },
+
 
     {
         timestamps: true,
