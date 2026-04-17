@@ -14,8 +14,8 @@ const FeedPage = () => {
         setLoading(true);
         const user = authService.getCurrentUser();
         if (!user || !user.token) {
-           setError('Please login to view your feed.');
-           return;
+          setError('Please login to view your feed.');
+          return;
         }
         const data = await recipeService.getFeed(user.token);
         setRecipes(data);
@@ -32,7 +32,7 @@ const FeedPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#fafafa] py-12 px-6 lg:px-24 transition-colors duration-300">
+    <div className="min-h-screen bg-[#fafafa] py-8 md:py-12 px-4 md:px-6 lg:px-24 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-12 animate-in fade-in slide-in-from-top-4 duration-700">

@@ -23,7 +23,7 @@
 
 .logo {
   font-size: 2.2rem;
-  color: #8b4513; 
+  color: #8b4513;
   letter-spacing: -1px;
 }
 
@@ -46,7 +46,7 @@
 .dish-container {
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(0,0,0,0.05) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.05) 0%, transparent 70%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -58,7 +58,7 @@
   width: 90%;
   height: 90%;
   object-fit: contain;
-  filter: drop-shadow(0 20px 40px rgba(0,0,0,0.1));
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.1));
   transition: transform 0.5s ease;
 }
 
@@ -71,8 +71,8 @@
   padding: 24px;
   border-radius: 20px;
   max-width: 380px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.05);
-  border: 1px solid rgba(0,0,0,0.02);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.02);
   z-index: 2;
   transform: translateY(-40px);
 }
@@ -106,9 +106,28 @@
   animation: fadeIn 0.8s ease-out;
 }
 
+@media (max-width: 768px) {
+  .register-page {
+    display: block;
+  }
+  .register-form-container {
+    display: block;
+    padding: 30px 20px;
+    height: auto;
+    min-height: 100vh;
+  }
+}
+
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateX(20px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .register-header h1 {
@@ -233,8 +252,26 @@
   .register-visual {
     display: none;
   }
+
   .register-form-container {
     padding: 40px;
+  }
+}
+
+@media (max-width: 640px) {
+  .register-page {
+    display: block;
+  }
+
+  .register-form-container {
+    display: block;
+    padding: 30px 20px;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .register-header h1 {
+    font-size: 2.2rem;
   }
 }
 
@@ -261,7 +298,7 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
 }
 
 .cropper-box {

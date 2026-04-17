@@ -16,7 +16,7 @@ const Register = () => {
   const fileInputRef = useRef(null);
   const [profileImage, setProfileImage] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [interests, setInterests] = useState(['Baking']);
+
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -30,21 +30,13 @@ const Register = () => {
   const [profilePicBlob, setProfilePicBlob] = useState(null);
   const navigate = useNavigate();
 
-  const availableInterests = [
-    'Baking', 'Vegan', 'Quick Meals', 'Italian', 'Molecular', 'Pastry'
-  ];
+
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const toggleInterest = (interest) => {
-    if (interests.includes(interest)) {
-      setInterests(interests.filter((i) => i !== interest));
-    } else {
-      setInterests([...interests, interest]);
-    }
-  };
+
 
   const handleAvatarClick = () => {
     fileInputRef.current.click();
@@ -206,20 +198,7 @@ const Register = () => {
             </div>
           </div>
 
-          <div className="interests-section">
-            <label>CULINARY INTERESTS</label>
-            <div className="interests-tags">
-              {availableInterests.map((interest) => (
-                <span
-                  key={interest}
-                  className={`tag ${interests.includes(interest) ? 'active' : ''}`}
-                  onClick={() => toggleInterest(interest)}
-                >
-                  {interest}
-                </span>
-              ))}
-            </div>
-          </div>
+
 
           {error && <div className="error-message">{error}</div>}
 

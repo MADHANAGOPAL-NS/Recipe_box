@@ -442,3 +442,40 @@
   font-weight: 700;
   letter-spacing: 1px;
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 1024px) {
+  .create-container {
+    flex-direction: column;
+    padding: 20px;
+  }
+  .editor-sidebar {
+    width: 100%;
+    position: static;
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .recipe-editor {
+    padding: 30px 20px;
+  }
+  .editor-header h1 {
+    font-size: 2.2rem;
+  }
+  .stats-row {
+    flex-direction: column;
+  }
+  .title-input {
+    font-size: 1.8rem;
+  }
+  .ingredient-row {
+    flex-wrap: wrap;
+  }
+  .ing-name-input {
+    flex: 1 1 100%;
+  }
+  .ing-qty-input, .ing-unit-input {
+    flex: 1 1 45%;
+  }
+}

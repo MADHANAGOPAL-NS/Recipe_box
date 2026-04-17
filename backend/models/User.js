@@ -35,7 +35,14 @@ const userSchema = mongoose.Schema(
         followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 
-        savedRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recipe' }]
+        savedRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recipe' }],
+
+        mealPlans: [
+            {
+                date: { type: Date, required: true },
+                recipe: { type: mongoose.Schema.Types.ObjectId, ref: 'Recipe', required: true }
+            }
+        ]
 
     },
 

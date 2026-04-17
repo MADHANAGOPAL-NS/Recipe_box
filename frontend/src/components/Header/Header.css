@@ -115,3 +115,15 @@
   border-radius: 50%;
   display: block;
 }
+
+@media (max-width: 1024px) {
+  .main-header {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-header {
+    display: none;
+  }
+}

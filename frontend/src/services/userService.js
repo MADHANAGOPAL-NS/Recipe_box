@@ -52,12 +52,36 @@ const getSavedRecipes = async (token) => {
   return response.data;
 };
 
+// Meal Planner Methods
+
+const addMealPlan = async (planData, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axios.post(`${API_URL}plan`, planData, config);
+  return response.data;
+};
+
+const getMealPlans = async (token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axios.get(`${API_URL}plan`, config);
+  return response.data;
+};
+
 const userService = {
   followUser,
   unfollowUser,
   saveRecipe,
   unsaveRecipe,
   getSavedRecipes,
+  addMealPlan,
+  getMealPlans,
 };
 
 export default userService;

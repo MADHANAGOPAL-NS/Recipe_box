@@ -37,7 +37,6 @@
   padding: 5px;
   border-radius: 8px;
   transition: var(--transition);
-  display: flex;
   align-items: center;
   justify-content: center;
 }
@@ -123,7 +122,8 @@
 }
 
 .nav-item.active {
-  background-color: #fff4e5; /* Light version of primary */
+  background-color: #fff4e5;
+  /* Light version of primary */
   color: var(--primary-color);
 }
 
@@ -152,8 +152,15 @@
 }
 
 @keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .settings-section h5 {
@@ -274,4 +281,17 @@
   border-radius: 12px;
   font-weight: 700;
   font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: none;
+    z-index: 60;
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
+  }
 }

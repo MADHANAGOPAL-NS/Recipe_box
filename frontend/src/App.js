@@ -7,6 +7,7 @@ import FeedPage from './pages/FeedPage';
 import DiscoverPage from './pages/DiscoverPage';
 import RecipeDetailPage from './pages/RecipeDetailPage';
 import CookbookPage from './pages/CookbookPage';
+import PlannerPage from './pages/PlannerPage';
 import Sidebar from './components/Sidebar/Sidebar';
 import './App.css';
 
@@ -32,6 +33,7 @@ function AppContent() {
           <Route path="/create" element={<CreateRecipe />} />
           <Route path="/recipes/:id" element={<RecipeDetailPage />} />
           <Route path="/cookbook" element={<CookbookPage />} />
+          <Route path="/planner" element={<PlannerPage />} />
         </Routes>
       </div>
     </div>

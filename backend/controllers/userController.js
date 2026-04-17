@@ -181,4 +181,54 @@ const getSavedRecipes = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
-module.exports = { followUser, unfollowUser, saveRecipe, unsaveRecipe, getSavedRecipes };
+
+const addMealPlan = async (req, res) => {
+    try {
+        const { date, recipeId } = req.body;
+
+        const currentUserId = req.user._id;
+
+        // 1. Edge Case: Missing Date
+
+        if (!date) {
+            return res.status(400).json({ message: "Date is required" });
+        }
+        // 2. Edge Case: Recipe not found or Invalid ID
+        const recipe = await Recipe.findById(recipeId);
+        if (!recipe) {
+            return res.status(404).json({ message: "Recipe not found" });
+        }
+        // 3. Add to User's meal plan array
+        const currentUser = await User.findById(currentUserId);
+
+        currentUser.mealPlans.push({
+            date: new Date(date), // Formats text date into true Date object
+            recipe: recipeId
+        });
+        await currentUser.save();
+        res.status(200).json({ message: "Meal plan added successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
+//fetch all meal plans for the user
+
+const getMealPlans = async (req, res) => {
+    try {
+        const currentUserId = req.user._id;
+
+        const user = await User.findById(currentUserId).populate('mealPlans.recipe');
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json(user.mealPlans);
+    }
+    catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
+module.exports = { followUser, unfollowUser, saveRecipe, unsaveRecipe, getSavedRecipes, addMealPlan, getMealPlans };
