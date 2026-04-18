@@ -8,13 +8,15 @@ import DiscoverPage from './pages/DiscoverPage';
 import RecipeDetailPage from './pages/RecipeDetailPage';
 import CookbookPage from './pages/CookbookPage';
 import PlannerPage from './pages/PlannerPage';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Sidebar from './components/Sidebar/Sidebar';
 import './App.css';
 
 function AppContent() {
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const location = useLocation();
-  const hideSidebar = ['/', '/login', '/register'].includes(location.pathname);
+  const hideSidebar = ['/', '/login', '/register', '/forgot-password'].includes(location.pathname) || location.pathname.startsWith('/reset-password');
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
@@ -34,6 +36,8 @@ function AppContent() {
           <Route path="/recipes/:id" element={<RecipeDetailPage />} />
           <Route path="/cookbook" element={<CookbookPage />} />
           <Route path="/planner" element={<PlannerPage />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
         </Routes>
       </div>
     </div>

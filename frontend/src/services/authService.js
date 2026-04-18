@@ -39,12 +39,24 @@ const deleteAccount = async (token) => {
   return response.data;
 };
 
+const forgotPassword = async (email) => {
+  const response = await API.post(API_URL + 'forgot-password', { email });
+  return response.data;
+};
+
+const resetPassword = async (token, password) => {
+  const response = await API.post(API_URL + `reset-password/${token}`, { password });
+  return response.data;
+};
+
 const authService = {
   register,
   login,
   logout,
   getCurrentUser,
   deleteAccount,
+  forgotPassword,
+  resetPassword,
 };
 
 export default authService;

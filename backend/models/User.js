@@ -42,7 +42,10 @@ const userSchema = mongoose.Schema(
                 date: { type: Date, required: true },
                 recipe: { type: mongoose.Schema.Types.ObjectId, ref: 'Recipe', required: true }
             }
-        ]
+        ],
+
+        resetPasswordToken: String,
+        resetPasswordExpire: Date,
 
     },
 

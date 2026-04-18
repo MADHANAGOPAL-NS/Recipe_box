@@ -3,6 +3,7 @@
 const User = require('../models/User');
 
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const { cloudinary } = require('../config/cloudinary');
 
 //function to generate JWT
@@ -113,4 +114,73 @@ const deleteUser = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser, deleteUser };
+// Forgot Password - Generate reset token and send (simulated) email
+const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: 'No user with that email' });
+        }
+
+        // Generate reset token
+        const resetToken = crypto.randomBytes(20).toString('hex');
+
+        // Hash token and set to resetPasswordToken field
+        user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+        // Set expire (10 minutes)
+        user.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+
+        await user.save();
+
+        // Normally you'd send an email here.
+        // For development/demonstration, we return the URL directly or log it.
+        const resetUrl = `${req.protocol}://${req.get('host')}/api/auth/reset-password/${resetToken}`;
+
+        res.status(200).json({ 
+            message: 'Email sent (simulated)', 
+            resetToken // Sending token back for ease of use in this demo environment
+        });
+        
+        console.log(`Password reset link: ${resetUrl}`);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// Reset Password - Verify token and update password
+const resetPassword = async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    const resetPasswordToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    try {
+        const user = await User.findOne({
+            resetPasswordToken,
+            resetPasswordExpire: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid or expired token' });
+        }
+
+        // Set new password
+        user.password = password;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+
+        await user.save();
+
+        res.status(200).json({ message: 'Password reset successful' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+module.exports = { registerUser, loginUser, deleteUser, forgotPassword, resetPassword };

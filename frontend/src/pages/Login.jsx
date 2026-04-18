@@ -70,7 +70,7 @@ const Login = () => {
               <div className="form-group">
                 <div className="label-flex">
                   <label>PASSWORD</label>
-                  <Link to="#" className="forgot-link">FORGOT?</Link>
+                  <Link to="/forgot-password" name="forgot" id="forgot" className="forgot-link">FORGOT?</Link>
                 </div>
                 <div className="password-input-wrapper">
                   <input
