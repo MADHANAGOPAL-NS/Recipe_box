@@ -60,14 +60,7 @@
   font-size: 1.4rem;
 }
 
-.sidebar.collapsed .sidebar-footer {
-  text-align: center;
-}
 
-.sidebar.collapsed .btn-premium {
-  padding: 12px 0;
-  font-size: 1.2rem;
-}
 
 .sidebar-profile {
   display: flex;
@@ -267,21 +260,7 @@
   font-weight: 700;
 }
 
-/* Sidebar Footer (already exists but adding just in case) */
-.sidebar-footer {
-  margin-top: auto;
-  padding-top: 20px;
-}
 
-.btn-premium {
-  width: 100%;
-  background: linear-gradient(90deg, #d67e2c, #8b4513);
-  color: white;
-  padding: 14px;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 0.9rem;
-}
 
 @media (max-width: 768px) {
   .sidebar {

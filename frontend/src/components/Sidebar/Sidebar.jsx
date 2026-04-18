@@ -148,11 +148,7 @@ const Sidebar = ({ isCollapsed, toggleSidebar }) => {
           </div>
         )}
 
-        <div className="sidebar-footer">
-          <button className="btn btn-premium w-full bg-gradient-to-r from-[#d67e2c] to-[#8b4513] text-white p-3 rounded-xl font-bold">
-            {isCollapsed ? '⭐' : 'Go Premium'}
-          </button>
-        </div>
+
       </aside>
     </>
   );
