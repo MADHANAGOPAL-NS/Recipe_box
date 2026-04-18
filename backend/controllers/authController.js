@@ -183,4 +183,26 @@ const resetPassword = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser, deleteUser, forgotPassword, resetPassword };
+// Reset Password Direct (No token - just email and new password)
+const resetPasswordDirect = async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: 'No user with that email' });
+        }
+
+        // Set new password
+        user.password = password;
+        await user.save();
+
+        res.status(200).json({ message: 'Password updated successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+module.exports = { registerUser, loginUser, deleteUser, forgotPassword, resetPassword, resetPasswordDirect };

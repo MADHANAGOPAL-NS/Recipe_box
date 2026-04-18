@@ -1,26 +1,42 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
-import './Login.css'; // Reusing Login styles for consistency
+import './Login.css';
 import loginBurger from '../assets/login-burger.png';
 
 const ForgotPassword = () => {
-  const [email, setEmail] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const onChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      return setError('Passwords do not match');
+    }
+
     setLoading(true);
     setError('');
     setMessage('');
 
     try {
-      await authService.forgotPassword(email);
-      setMessage('A reset token has been generated. Check the console for the simulation link!');
+      await authService.resetPasswordDirect(formData.email, formData.password);
+      setMessage('Password updated successfully! Redirecting to login...');
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong. Please try again.');
+      setError(err.response?.data?.message || 'Something went wrong. Please check your email.');
     } finally {
       setLoading(false);
     }
@@ -38,7 +54,7 @@ const ForgotPassword = () => {
           <div className="login-content">
             <div className="login-title">
               <h2>Reset Password</h2>
-              <p>Enter your meal associated email to receive a recovery link.</p>
+              <p>Enter your email and forge a new key for your kitchen.</p>
             </div>
 
             <form onSubmit={onSubmit} className="login-form">
@@ -46,9 +62,36 @@ const ForgotPassword = () => {
                 <label>EMAIL ADDRESS</label>
                 <input
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  name="email"
+                  value={formData.email}
+                  onChange={onChange}
                   placeholder="chef@recipebox.com"
+                  className="form-input"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>NEW PASSWORD</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={onChange}
+                  placeholder="••••••••"
+                  className="form-input"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>CONFIRM NEW PASSWORD</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={onChange}
+                  placeholder="••••••••"
                   className="form-input"
                   required
                 />
@@ -58,7 +101,7 @@ const ForgotPassword = () => {
               {message && <div className="success-message" style={{ color: '#d67e2c', marginTop: '10px', fontSize: '0.9rem' }}>{message}</div>}
 
               <button type="submit" className="btn btn-primary login-btn" disabled={loading}>
-                {loading ? 'Processing...' : 'Send Reset Link →'}
+                {loading ? 'Updating...' : 'Update Password →'}
               </button>
 
               <p className="auth-link">

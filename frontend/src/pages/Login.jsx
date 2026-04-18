@@ -70,7 +70,14 @@ const Login = () => {
               <div className="form-group">
                 <div className="label-flex">
                   <label>PASSWORD</label>
-                  <Link to="/forgot-password" name="forgot" id="forgot" className="forgot-link">FORGOT?</Link>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/forgot-password')}
+                    className="forgot-link"
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                  >
+                    FORGOT?
+                  </button>
                 </div>
                 <div className="password-input-wrapper">
                   <input

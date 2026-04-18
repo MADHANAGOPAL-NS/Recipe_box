@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
 import './Login.css';
 import loginBurger from '../assets/login-burger.png';

@@ -49,6 +49,11 @@ const resetPassword = async (token, password) => {
   return response.data;
 };
 
+const resetPasswordDirect = async (email, password) => {
+  const response = await API.post(API_URL + 'reset-password-direct', { email, password });
+  return response.data;
+};
+
 const authService = {
   register,
   login,
@@ -57,6 +62,7 @@ const authService = {
   deleteAccount,
   forgotPassword,
   resetPassword,
+  resetPasswordDirect,
 };
 
 export default authService;
