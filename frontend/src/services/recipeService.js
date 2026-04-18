@@ -1,6 +1,6 @@
-import axios from 'axios';
+import API from './api';
 
-const API_URL = 'http://localhost:5000/api/recipes/';
+const API_URL = '/recipes/';
 
 const createRecipe = async (recipeData, token) => {
   const config = {
@@ -10,19 +10,19 @@ const createRecipe = async (recipeData, token) => {
     },
   };
 
-  const response = await axios.post(API_URL, recipeData, config);
+  const response = await API.post(API_URL, recipeData, config);
   return response.data;
 };
 
 const getRecipes = async (params = {}) => {
   const query = new URLSearchParams(params).toString();
   const url = query ? `${API_URL}?${query}` : API_URL;
-  const response = await axios.get(url);
+  const response = await API.get(url);
   return response.data;
 };
 
 const getRecipeById = async (id) => {
-  const response = await axios.get(API_URL + id);
+  const response = await API.get(API_URL + id);
   return response.data;
 };
 
@@ -32,12 +32,12 @@ const getFeed = async (token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await axios.get(API_URL + 'feed', config);
+  const response = await API.get(API_URL + 'feed', config);
   return response.data;
 };
 
 const getComments = async (id) => {
-  const response = await axios.get(`${API_URL}${id}/comments`);
+  const response = await API.get(`${API_URL}${id}/comments`);
   return response.data;
 };
 
@@ -47,7 +47,7 @@ const addComment = async (id, commentData, token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await axios.post(`${API_URL}${id}/comments`, commentData, config);
+  const response = await API.post(`${API_URL}${id}/comments`, commentData, config);
   return response.data;
 };
 
@@ -57,7 +57,7 @@ const rateRecipe = async (id, ratingData, token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await axios.post(`${API_URL}${id}/rate`, ratingData, config);
+  const response = await API.post(`${API_URL}${id}/rate`, ratingData, config);
   return response.data;
 };
 

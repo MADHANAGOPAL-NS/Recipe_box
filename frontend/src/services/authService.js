@@ -1,6 +1,6 @@
-import axios from 'axios';
+import API from './api';
 
-const API_URL = 'http://localhost:5000/api/auth/';
+const API_URL = '/auth/';
 
 const register = async (userData) => {
   const config = {
@@ -8,12 +8,12 @@ const register = async (userData) => {
       'Content-Type': 'multipart/form-data',
     },
   };
-  const response = await axios.post(API_URL + 'register', userData, config);
+  const response = await API.post(API_URL + 'register', userData, config);
   return response.data;
 };
 
 const login = async (userData) => {
-  const response = await axios.post(API_URL + 'login', userData);
+  const response = await API.post(API_URL + 'login', userData);
   if (response.data.token) {
     localStorage.setItem('user', JSON.stringify(response.data));
   }
@@ -34,7 +34,7 @@ const deleteAccount = async (token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await axios.delete(API_URL + 'delete', config);
+  const response = await API.delete(API_URL + 'delete', config);
   localStorage.removeItem('user');
   return response.data;
 };

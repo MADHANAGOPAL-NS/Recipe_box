@@ -1,6 +1,6 @@
-import axios from 'axios';
+import API from './api';
 
-const API_URL = 'http://localhost:5000/api/users/';
+const API_URL = '/users/';
 
 const followUser = async (userId, token) => {
   const config = {
@@ -8,7 +8,7 @@ const followUser = async (userId, token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await axios.post(`${API_URL}${userId}/follow`, {}, config);
+  const response = await API.post(`${API_URL}${userId}/follow`, {}, config);
   return response.data;
 };
 
@@ -18,7 +18,7 @@ const unfollowUser = async (userId, token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await axios.post(`${API_URL}${userId}/unfollow`, {}, config);
+  const response = await API.post(`${API_URL}${userId}/unfollow`, {}, config);
   return response.data;
 };
 
@@ -28,7 +28,7 @@ const saveRecipe = async (recipeId, token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await axios.post(`${API_URL}${recipeId}/save`, {}, config);
+  const response = await API.post(`${API_URL}${recipeId}/save`, {}, config);
   return response.data;
 };
 
@@ -38,7 +38,7 @@ const unsaveRecipe = async (recipeId, token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await axios.post(`${API_URL}${recipeId}/unsave`, {}, config);
+  const response = await API.post(`${API_URL}${recipeId}/unsave`, {}, config);
   return response.data;
 };
 
@@ -48,7 +48,7 @@ const getSavedRecipes = async (token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await axios.get(`${API_URL}saved`, config);
+  const response = await API.get(`${API_URL}saved`, config);
   return response.data;
 };
 
@@ -60,7 +60,7 @@ const addMealPlan = async (planData, token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await axios.post(`${API_URL}plan`, planData, config);
+  const response = await API.post(`${API_URL}plan`, planData, config);
   return response.data;
 };
 
@@ -70,7 +70,7 @@ const getMealPlans = async (token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await axios.get(`${API_URL}plan`, config);
+  const response = await API.get(`${API_URL}plan`, config);
   return response.data;
 };
 
