@@ -120,8 +120,8 @@ CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 
 ## 🚀 Live Demo
 
-frontend:
-backend:
+frontend: https://recipe-box-tawny.vercel.app
+backend: https://recipebox-backend-h3x4.onrender.com
 
 ## 🧪 Testing
 
@@ -137,6 +137,6 @@ backend:
 ## 🧑‍💻 Author
 
 **N S MADHANAGOPAL**
-Github: https://github.com/MADHANAGOPAL-NS/Recipe_box.git
+
 ---
 
